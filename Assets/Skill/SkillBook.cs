@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SkillBook
+public class SkillBook : MonoBehaviour
 {
     public SkillLinkedHashMap book;
     int keyCounter = 1;
-    public SkillBook()
+    public void Awake()
     {
         book = new SkillLinkedHashMap();
         var file = Resources.Load<TextAsset>("SerializedFiles/BasicSkills");
@@ -41,5 +41,6 @@ public class SkillBook
                 book.Insert(skill);
             }
         }
+        reader.Close();
     }
 }

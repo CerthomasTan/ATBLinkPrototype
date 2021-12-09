@@ -37,29 +37,53 @@ public class SkillIndex
     {
         foreach (Node<Key> baseSkillKey in skill.skillSet.ToArray())
         {
-            int address = HashIt(baseSkillKey.data.value);
-            Node<SkillSet> currentSkillSet = table[address];
-            //base skill doesn't exists, insert base skill
-            if (currentSkillSet == null)
-            {
-                Node<SkillSet> skillsNode = new Node<SkillSet>(new SkillSet());
-                skillsNode.data.Insert(baseSkillKey.data);
-                skillsNode.data.Insert(skill);
-                table[address] = skillsNode;
-                return;
-            }
+            Index(baseSkillKey, skill);
+        }
+    }
 
-            while(currentSkillSet != null)
+    private void Index(Node<Key> baseSkillKey, Skill skill)
+    {
+        int address = HashIt(baseSkillKey.data.value);
+        Node<SkillSet> currentSkillSet = table[address];
+        //base skill doesn't exists, insert base skill
+        if (currentSkillSet == null)
+        {
+            Node<SkillSet> skillsNode = new Node<SkillSet>(new SkillSet());
+            skillsNode.data.Insert(baseSkillKey.data);
+            skillsNode.data.Insert(skill);
+            table[address] = skillsNode;
+            return;
+        }
+
+        //if at curent base, insert skill into set
+        else if (currentSkillSet.data.Contains(baseSkillKey.data))
+        {
+            currentSkillSet.data.Insert(skill);
+            return;
+        }
+
+        else
+        {
+            Node<SkillSet> previous = table[address];
+            while (currentSkillSet != null)
             {
                 if (currentSkillSet.data.Contains(baseSkillKey.data))
                 {
                     currentSkillSet.data.Insert(skill);
+                    return;
                 }
+                previous = currentSkillSet;
                 currentSkillSet = currentSkillSet.next;
             }
+
+            Node<SkillSet> skillsNode = new Node<SkillSet>(new SkillSet());
+            skillsNode.data.Insert(baseSkillKey.data);
+            skillsNode.data.Insert(skill);
+            previous.next = skillsNode;
+            return;
+
         }
     }
-
 
     public SkillSet GetSkillsThatContain(Node<Key> keyNode)
     {

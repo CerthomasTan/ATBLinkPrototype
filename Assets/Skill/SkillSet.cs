@@ -125,8 +125,7 @@ public class SkillSet
         SkillSet resultSet = new SkillSet();
         foreach(Node<Key> e in keyValuesArray)
         {
-            Node<Key> current = null;
-            if (e != null) { current = new Node<Key>(e); }
+            Node<Key> current = e;
             while (current != null)
             {
                 if (otherSkillSet.Contains(current.data))
