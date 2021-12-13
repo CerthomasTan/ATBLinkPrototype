@@ -7,14 +7,18 @@ public class PlayerSkillUIController : MonoBehaviour
 {
     [SerializeField] GameObject playerSkillBook;
     [SerializeField] GameObject playerButtonList;
+    [SerializeField] GameObject playerLinkedSkillsUI;
+    [SerializeField] GameObject playerHealthDisplayUI;
+
+    [SerializeField] GameObject battleSystem;
+
+    Hero currentHero;
+    List<Hero> linkingHeros;
     List<Skill> skillList;
     SkillSet playerLinkedSkills;
     Cursor cursor;
     SkillButton[] buttonArray;
-
-    [SerializeField] Hero hero1;
-    [SerializeField] Hero hero2;
-    [SerializeField] Hero hero3;
+    bool isSkillLoaded = false;
     Queue<Hero> heroList;
 
     int playerCursorScroll = 0;
@@ -25,25 +29,36 @@ public class PlayerSkillUIController : MonoBehaviour
     void Start()
     {
         clearData();
-        heroList = new Queue<Hero>();
-        heroList.Enqueue(hero1);
-        heroList.Enqueue(hero2);
-        heroList.Enqueue(hero3);
-
+        generateHeroUI();
+        linkingHeros = new List<Hero>();
         playerLinkedSkills = new SkillSet();
         buttonArray = this.GetComponentsInChildren<SkillButton>();
         cursor = this.GetComponentInChildren<Cursor>();
-
-        Hero t = heroList.Dequeue();
-        heroList.Enqueue(t);
-        updateList(t.skills);
-        //playerSkillBook.GetComponent<SkillBook>().book.debugCommands();
+        heroList = battleSystem.GetComponent<BattleSystem>().heroTurnQueue;
+        cursor.moveCursor(buttonArray[0].gameObject.transform.position);
+        StartCoroutine(updateList());
     }
 
     // Update is called once per frame
     void Update()
     {
-        playerInput();
+        if (skillsAreAvaliable() || isSkillLoaded)
+        {
+            playerInput();
+        }
+        
+    }
+
+    IEnumerator updateList()
+    {
+        while (battleSystem.GetComponent<BattleSystem>().battleIsGoing)
+        {
+            yield return new WaitUntil(() => !isSkillLoaded);
+            yield return new WaitUntil(() => heroList.Count > 0);
+            currentHero = heroList.Dequeue();
+            updateList(currentHero.skills);
+            isSkillLoaded = true;
+        }
     }
 
     void updateList(SkillSet skillSet)
@@ -127,25 +142,34 @@ public class PlayerSkillUIController : MonoBehaviour
 
     }
 
-    public void linkSkill(Skill skill)
+    void linkSkill(Skill skill)
     {
         playerLinkedSkills.Insert(playerSkillBook.GetComponent<SkillBook>().book.Find(skill));
+        Text[] textUI = playerLinkedSkillsUI.GetComponentsInChildren<Text>();
+        textUI[playerLinkedSkills.Size() - 1].text = skill.name;
         clearData();
-        Hero temp = heroList.Dequeue();
-        heroList.Enqueue(temp);
-        updateList(temp.skills);
         return;
     }
 
     public void addSkillToQueue(Skill skill)
     {
         playerLinkedSkills.Insert(playerSkillBook.GetComponent<SkillBook>().book.Find(skill));
-        Debug.Log(playerSkillBook.GetComponent<SkillBook>().book.Find(playerLinkedSkills) + " was added to queue") ;
+        Skill linkedSkill = playerSkillBook.GetComponent<SkillBook>().book.Find(playerLinkedSkills);
+        if(linkedSkill != null)
+        {
+            battleSystem.GetComponent<BattleSystem>().addAttackingList(currentHero.attack(linkedSkill, linkingHeros));
+        }
+        else
+        {
+            Skill failedSkill = new Skill(9999,"failed linked",1, "attack", 1);
+            battleSystem.GetComponent<BattleSystem>().addAttackingList(currentHero.attack(failedSkill, linkingHeros));
+        }
         clearData();
+        foreach(Text t in playerLinkedSkillsUI.GetComponentsInChildren<Text>())
+        {
+            t.text = "";
+        }
         playerLinkedSkills = new SkillSet();
-        Hero temp = heroList.Dequeue();
-        heroList.Enqueue(temp);
-        updateList(temp.skills);
         return;
     }
 
@@ -161,14 +185,25 @@ public class PlayerSkillUIController : MonoBehaviour
         {
             if (playerLinkedSkills.Size() < 2)
             {
+                linkingHeros.Add(currentHero);
                 linkSkill(buttonArray[playerCursorSelection].skill);
+                cursor.moveCursor(buttonArray[0].gameObject.transform.position);
+                playerCursorSelection = 0;
+                clearButtons();
+                isSkillLoaded = false;
             }
         }
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
             SkillButton[] buttonArray = this.GetComponentsInChildren<SkillButton>();
+            linkingHeros.Add(currentHero);
             addSkillToQueue(buttonArray[playerCursorSelection].skill);
+            linkingHeros.Clear();
+            cursor.moveCursor(buttonArray[0].gameObject.transform.position);
+            playerCursorSelection = 0;
+            clearButtons();
+            isSkillLoaded = false;
         }
 
         if (Input.GetKeyDown(KeyCode.DownArrow))
@@ -207,10 +242,74 @@ public class PlayerSkillUIController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            clearData();
-            Hero temp = heroList.Dequeue();
-            this.updateList(temp.skills);
-            heroList.Enqueue(temp);
+            if (isSkillLoaded)
+            {
+                clearData();
+                heroList.Enqueue(currentHero);
+                isSkillLoaded = false;
+            }
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+    }
+
+    private void generateHeroUI()
+    {
+        foreach (Hero hero in battleSystem.GetComponent<BattleSystem>().heros.GetComponentsInChildren<Hero>())
+        {
+            bool setUI = false;
+            foreach (HeroUIController heroUI in playerHealthDisplayUI.GetComponentsInChildren<HeroUIController>())
+            {   
+                if(heroUI.hero == null && !setUI)
+                {
+                    heroUI.hero = hero;
+                    setUI = true;
+                }
+            }
+        }
+    }
+
+    private bool skillsAreAvaliable()
+    {
+        if(heroList.Count > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    void clearButtons()
+    {
+        for(int i = 0; i < 3; i++)
+        {
+            buttonArray[i].clearText();
+        }
+
+        clearCombinedSkills();
+    }
+
+    void clearCombinedSkills()
+    {
+        Text[] buttonArray = this.GetComponentsInChildren<Text>();
+        List<Text> textList = new List<Text>();
+        foreach (Text o in buttonArray)
+        {
+            if (o.gameObject.tag.Equals("CombinedSkill"))
+            {
+                textList.Add(o);
+            }
+        }
+
+        foreach (Text t in textList)
+        {
+            t.enabled = false;
+        }
+
     }
 }

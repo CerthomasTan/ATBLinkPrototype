@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-public class Hero : MonoBehaviour
+public class Hero : Actor
 {
-    [SerializeField] TextAsset skillData;
-    [SerializeField] TextAsset heroStats;
-    public SkillSet skills;
-    int level = 0;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -24,7 +21,7 @@ public class Hero : MonoBehaviour
 
     void updateSkillList()
     {
-        StringReader reader = new StringReader(skillData.text);
+        StringReader reader = new StringReader(base.skillData.text);
         while (reader.Peek() >= 0)
         {
             string[] data = reader.ReadLine().Split(',');
@@ -33,5 +30,15 @@ public class Hero : MonoBehaviour
                 this.skills.Insert(new Key(int.Parse(data[0])));
             }
         }
+    }
+
+    public Attack attack(Skill skill, List<Hero> heros)
+    {
+        List<Actor> actors = new List<Actor>();
+        foreach(Actor actor in heros)
+        {
+            actors.Add(actor);
+        }
+        return base.attack(skill, actors);
     }
 }

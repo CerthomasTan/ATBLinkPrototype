@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SkillDemo : MonoBehaviour
 {
+    [SerializeField] SkillBook skillBook;
     // Start is called before the first frame update
     void Start()
     {
@@ -83,17 +84,19 @@ public class SkillDemo : MonoBehaviour
         Debug.Log("Welcome to the test");
 
         Debug.Log("Creating player skill book");
-        SkillBook playerSkillBook = new SkillBook();
-
+        if(skillBook == null)
+        {
+            return;
+        }
         Debug.Log("Finding if key values, searching for skill 1");
-        Skill skill = playerSkillBook.book.Find(1);
+        Skill skill = skillBook.book.Find(1);
         Debug.Log(skill);
 
         Debug.Log("Finding if key values, searching for skill 10");
-        Debug.Log(playerSkillBook.book.Find(10));
+        Debug.Log(skillBook.book.Find(10));
 
         Debug.Log("finding all that contain");
-        Debug.Log(playerSkillBook.book.FindAllThatContain(skill));
+        Debug.Log(skillBook.book.FindAllThatContain(skill));
         
     }
 }

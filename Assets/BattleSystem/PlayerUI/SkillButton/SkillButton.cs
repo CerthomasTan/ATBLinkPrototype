@@ -42,4 +42,9 @@ public class SkillButton : MonoBehaviour
     {
         buttonText.text = skill.name;
     }
+
+    public void clearText()
+    {
+        buttonText.text = "";
+    }
 }

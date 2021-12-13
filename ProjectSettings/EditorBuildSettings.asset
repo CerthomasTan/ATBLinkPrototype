@@ -4,5 +4,14 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/StartScreen.unity
+    guid: 0ecc5ed581fad7248985625da0d9b2ce
+  - enabled: 1
+    path: Assets/Scenes/ATBLinkDemoScreen.unity
+    guid: 94be25a697162b643a20f463e1252400
+  - enabled: 1
+    path: Assets/Scenes/SkillLinkDemo.unity
+    guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects: {}

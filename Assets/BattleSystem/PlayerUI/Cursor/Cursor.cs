@@ -9,7 +9,7 @@ public class Cursor : MonoBehaviour
     public float delta = 1.5f;  // Amount to move left and right from the start point
     public float speed = 2.0f;
     private Vector3 startPos;
-
+    [SerializeField] float distanceFromButton = 50;
     void Start()
     {
         startPos = transform.position;
@@ -25,7 +25,7 @@ public class Cursor : MonoBehaviour
     public void moveCursor(Vector3 position)
     {
         this.startPos = position;
-        startPos.x = startPos.x - 20;
+        startPos.x = startPos.x - distanceFromButton;
         transform.position = startPos;
     }
  }
