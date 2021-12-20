@@ -1,0 +1,30 @@
+Flame Sword,15,2,attack,{},1,{1;5}
+Crushing Magma,25,4,attack,{stun;},1,{1;6}
+Eruption,30,4,attack,{stun;},1,{1;7}
+Fire Shot,15,2,attack,{},1,{1;8}
+Raining Embers,25,2,attack,{},1,{1;9}
+Fire Ball,35,4,attack,{},1,{1;10}
+Strike of the Demonic Azure,20,2.5,attack,{stun;},1,{1;5;8}
+Demon Breathing: Unkowing Fire,25,2.5,attack,{},1,{1;5;9}
+Purgatory,35,2.5,attack,{},1,{1;5;10}
+Devils Descent,45,4,attack,{},1,{1;6;8}
+Meteor Star Fall,30,3,attack,{},1,{1;6;9}
+Radaint Planet Buster,20,1,attack,{stun;},1,{1;6;10}
+Water Cutter,20,1.5,attack,{},5,{2;5}
+Water Fall,30,1,attack,{stun;},6,{2;6}
+Gyser,25,1.5,attack,{},6,{2;7}
+Water Shot,30,1,attack,{},8,{2;8}
+Water Blast,25,1,attack,{stun;},9,{2;9}
+Water Beam,50,4,attack,{},10,{2;10}
+Full Throttle,65,4,attack,{},5,{2;5;8}
+Cutting Storm,60,3,attack,{},5,{2;5;9}
+Tidal Wave,30,1,attack,{stun;},5,{2;5;10}
+Strike of Water: Posieden's Trident,45,3.2,attack,{},6,{2;6;8}
+Flood of Extinction,85,6,attack,{},6,{2;6;9}
+Bloody Aquarius Judgement,62,1.2,attack,{},6,{2;6;10}
+Thunder Clap,15,1,attack,{},5,{3;5}
+Lighting Strike,15,1,attack,{stun;},6,{3;6}
+Electrical Charge,30,1.5,attack,{},7,{3;7}
+Electrifying Blast,35,2.5,attack,{},8,{3;8}
+Lighting Storm,30,1.5,attack,{},9,{3;9}
+Wyrens Breath,25,1,attack,{},10,{3;10}

@@ -3,20 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
+/// <summary>
+/// This class is for create enemies. This is an daughter class of actor
+/// </summary>
 public class Enemy : Actor
 {
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     void updateSkillList()
     {
         StringReader reader = new StringReader(skillData.text);
